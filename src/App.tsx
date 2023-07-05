@@ -1,5 +1,7 @@
 import "./App.css";
 import { useFormik } from "formik";
+import * as Yup from "yup";
+
 interface FormValues {
   name: string;
   email: string;
@@ -17,28 +19,13 @@ function App() {
     onSubmit: (values) => {
       console.log("values", values);
     },
-    validate: (values) => {
-      let errors: FormValues = {
-        name: "",
-        email: "",
-        channel: "",
-      };
-      if (!values.name) {
-        errors.name = "Name is required";
-      }
-      if (values.name.trim().length < 1) {
-        errors.name = "Please write at least 2 characters";
-      }
-      if (!values.email) {
-        errors.email = "Email is required";
-      } else if (!emailRegex.test(values.email)) {
-        errors.email = "Invalid email format";
-      }
-      if (!values.channel) {
-        errors.channel = "Channel is required";
-      }
-      return errors;
-    },
+    validationSchema: Yup.object<FormValues>({
+      name: Yup.string().required("Name is required"),
+      email: Yup.string()
+        .email("Invalid email format")
+        .required("Email is required"),
+      channel: Yup.string().required("Channel is required"),
+    }),
   });
   console.log("formik Errors", formik.errors);
   return (
